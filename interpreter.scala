@@ -27,13 +27,11 @@ def execute(s:State):Value = s match
   def main(args: Array[String]): Unit = {
 	
 	val myprog = Conj(Rule("w1"),Rule("c"))
-<<<<<<< HEAD
 	val myval = Pair(Pair(Integer(4),Integer(5)),Integer(6))
 	val mystate = (myval,myprog)
 	println("An example state: "+mystate)
 	val newval = execute(mystate)
 	println("After execution: "+newval)
->>>>>>> d6b5b22be1a2a9d795035f9e879f928fa4b718ee
 }
 
 }
