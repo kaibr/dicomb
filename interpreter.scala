@@ -1,7 +1,5 @@
+
 package dicomb;
-
-
-
 
 
 object interpreter {

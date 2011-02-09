@@ -106,11 +106,11 @@ object typeInfer {
 		}
 	}
 	
-def typeof(term:Prog) : FullType = { 
+def typeof(term:Prog) : ProgType = { 
 	val a = freshTyvar
 	val b = freshTyvar  
 	val s = tp(term,a,b,emptySubst) 
-	FullType(s(a),s(b)) 
+	ProgType(s(a),s(b)) 
 }
 
 def main(args: Array[String])
