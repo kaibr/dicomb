@@ -12,12 +12,16 @@ object parser extends JavaTokenParsers {
 								|  "e" ^^ {_ => Rule("e")}
 								) 
 	
-	// def prog : Parser[Prog]= (	atomicprog ~ rep("." ~ prog) ^^ {(p: Prog, q: Prog) => Seq(p,q)}					)
+	def prog = (atomicprog ~ "." ~ atomicprog) ^^ {case p ~ "." ~ q => Seq(p,q)}					
 
   def main(args: Array[String]): Unit = {
 
-	    val input = "idx"
+	    val input = "id"
 		println("Input: "+input+"\nResult: ")
 		println(parseAll(atomicprog,input))
+		val input2 = "id.c"
+		println("Input: "+input2+"\nResult: ")
+		println(parseAll(prog,input2))
+		
 	}
 }
