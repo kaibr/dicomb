@@ -1,13 +1,17 @@
 
 package dicomb;
 
+// adapted from Martin Odersky's "Scala by Example"
+
 object typeInfer {
 
-		private var n:Int = 0
+	private var counter:Int = 0
 
-	def freshTyvar():Type = {n=n+1; Tyvar("a"+n)}
+	def freshTyvar():Type = {counter=counter+1; Tyvar("a"+counter)}
 
+	// Substitutions
 	abstract class Subst extends Function1[Type,Type] {
+		
 		
 		def lookup(x:Tyvar):Type
 		
@@ -116,30 +120,28 @@ def typeof(term:Prog) : ProgType = {
 def main(args: Array[String])
 {
 	
-	val x = Seq(Id(),Rule("c"))
+	val programs = List( Seq(Id(),Rule("c")), 
+			                        Seq( Rule("c"), Seq(Rule("w1"), Id()) ),
+                                    Imp(Rule("w1"),Rule("w1"))   )
 
-	val y = Seq( Rule("c"), Seq(Rule("w1"), Id()) )
-
-	val z = Imp(Rule("w1"),Rule("w1"))
-
+     println("Some Programs with Types:")
+     programs.foreach(x => println(x.prettyprint+" : "+typeInfer.typeof(x)))
+     println()
+     
 	val a = TyImp(TyConj(Tyvar("a"),Tyvar("b")),Tyvar("a"))
-
 	val b = TyImp(TyConj(Tyvar("a"),Tyvar("b")),Tyvar("b"))
-
-	println("Some Programs with Types:")
-	println(x.prettyprint+" : "+typeInfer.typeof(x))
-	println(y.prettyprint+" : "+typeInfer.typeof(y))
-	println(z.prettyprint+" : "+typeInfer.typeof(z))
+	
+	println("Two Types and their mgu: ")
+	println(a+"      "+b+"       mgu:  "+mgu(a,b,emptySubst))
 	println()
-	print("Two Types and their mgu: ")
-	println(a+" ,"+b+" : "+typeInfer.mgu(a,b,typeInfer.emptySubst))
     	
-   val s0 = typeInfer.emptySubst.extend(Tyvar("a"), TyConj(Tyvar("b"),Tyvar("c")) )
-   val s1 = typeInfer.emptySubst.extend(Tyvar("a"),Tyvar("b"))
+   val s0 = emptySubst.extend(Tyvar("a"), TyConj(Tyvar("b"),Tyvar("c")) )
+   val s1 = emptySubst.extend(Tyvar("a"),Tyvar("b"))
    val s2 = s1.extend(Tyvar("b"),Tyvar("c"))
-		println("The substitution "+s2+" applied to type variable a: "+s2(Tyvar("a")))
+		println("Substitution  /  Applied to  /  Result")
+		println(s2+"  /  "+Tyvar("a")+"  /  "+s2(Tyvar("a")))
 
-
+// TODO error handling
 	// catch { case TypeError(msg) => println("\n cannot type: "+current+"\n reason:"+msg)}
 	
 	
