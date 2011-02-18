@@ -40,12 +40,14 @@ def execute(s:State):Value = s match
 	
   def main(args: Array[String]): Unit = {
 	
-	val myprog = Conj(Rule("w1"),Rule("c"))
-	val myval = Pair(Pair(Integer(4),Integer(5)),Integer(6))
-	val mystate = (myval,myprog)
-	println("An example state: "+mystate)
-	val newval = execute(mystate)
-	println("After execution: "+newval)
+	
+	val states = List( (Pair(Pair(Integer(4),Integer(5)),Integer(6)), Conj(Rule("w1"),Rule("c")))
+							)
+
+	println("Original State     /     State after Execution\n")
+	states.foreach {x => println(x+"   /   "+execute(x))} 						
+	
+
 }
 
 }
