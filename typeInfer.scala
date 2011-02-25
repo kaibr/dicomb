@@ -39,7 +39,7 @@ object typeInfer {
 		override def toString = "<emptySubst>"
 	}
 
-	
+	// list of free variables in a type
 	def tyvars(t: Type): List[Tyvar] = t match {
 		case Tyvar(a) => List(Tyvar(a))
 		case TyImp(p,q) => tyvars(p) union tyvars(q)
@@ -62,10 +62,11 @@ object typeInfer {
 
 	case class TypeError(s: String) extends Exception(s) {}
 
-	// yields a substitution extending subst which, 
+	// tp yields a substitution extending subst which, 
 	// when applied to types in and out, 
 	// yields most general input and output types for term   
 	
+	// for error reporting current program is stored
 	var current: Prog = null
 	
 	def tp(term: Prog, in: Type, out: Type, subst: Subst) : Subst = 
@@ -125,7 +126,9 @@ def main(args: Array[String])
                                     Imp(Rule("w1"),Rule("w1"))   )
 
      println("Some Programs with Types:")
-     programs.foreach(x => println(x+" : "+typeInfer.typeof(x)))
+     try {
+    	 programs.foreach(x => println(x+" : "+typeInfer.typeof(x))) }
+     catch { case TypeError(msg) => println("\n cannot type: "+current+"\n reason:"+msg)}
      println()
      
 	val a = TyImp(TyConj(Tyvar("a"),Tyvar("b")),Tyvar("a"))
@@ -140,10 +143,6 @@ def main(args: Array[String])
    val s2 = s1.extend(Tyvar("b"),Tyvar("c"))
 		println("Substitution  /  Applied to  /  Result")
 		println(s2+"  /  "+Tyvar("a")+"  /  "+s2(Tyvar("a")))
-
-// TODO error handling
-	// catch { case TypeError(msg) => println("\n cannot type: "+current+"\n reason:"+msg)}
-	
 	
 }
 
