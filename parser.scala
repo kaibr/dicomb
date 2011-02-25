@@ -28,7 +28,7 @@ object parser extends JavaTokenParsers {
   def main(args: Array[String]): Unit = {
 
 	    val programs = List("id", "id.id.id", "c.w1.w2", "(w1 -> w2)", "(w1 ^ w2)","id.(id^id).(w1->w1.w2)")
-		programs foreach {x => println("Input: "+x+"       "+parseAll(prog,x))}
+		programs foreach {x => println("Input: "+x+"       "+(parseAll(prog,x).get.toStrucString))}
 	    
 	    val values = List("7","(7,9)","{(7,9),id,id}")
 	    values foreach {x => println("Input: "+x+"       "+parseAll(value,x))}

@@ -125,7 +125,7 @@ def main(args: Array[String])
                                     Imp(Rule("w1"),Rule("w1"))   )
 
      println("Some Programs with Types:")
-     programs.foreach(x => println(x.prettyprint+" : "+typeInfer.typeof(x)))
+     programs.foreach(x => println(x+" : "+typeInfer.typeof(x)))
      println()
      
 	val a = TyImp(TyConj(Tyvar("a"),Tyvar("b")),Tyvar("a"))
