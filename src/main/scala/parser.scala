@@ -3,34 +3,55 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 object parser extends JavaTokenParsers {
 
-	def atomicprog: Parser[Prog]  = (
-									"id" ^^ {_ => Id()}
-								|  	"c" ^^ {_ => Rule("c")}
-								|  	"w1" ^^ {_ => Rule("w1")}
-								|  	"w2" ^^ {_ => Rule("w2")}
-								|  	"i" ^^ {_ => Rule("i")}
-								|  "e" ^^ {_ => Rule("e")} )
+    def atomicprog: Parser[Prog] = (
+        "id" ^^ { _ => Id() }
+            | "c" ^^ { _ => Rule("c") }
+            | "w1" ^^ { _ => Rule("w1") }
+            | "w2" ^^ { _ => Rule("w2") }
+            | "i" ^^ { _ => Rule("i") }
+            | "e" ^^ { _ => Rule("e") })
 
 
-	def conjprog: Parser[Prog]  = 	"("~>prog~"^"~prog<~")" ^^  {case p ~ "^" ~ q => Conj(p,q)}
-	def impprog: Parser[Prog]  =  "("~>prog~"->"~prog<~")" ^^ {case p ~ "->" ~ q => Imp(p,q)}
+    def conjprog: Parser[Prog] = "(" ~> prog ~ "^" ~ prog <~ ")" ^^ { case p ~ "^" ~ q => Conj(p, q) }
 
-	def nonseqprog: Parser[Prog] = atomicprog | conjprog | impprog
+    def impprog: Parser[Prog] = "(" ~> prog ~ "->" ~ prog <~ ")" ^^ { case p ~ "->" ~ q => Imp(p, q) }
 
-	def prog: Parser[Prog]  = rep1sep(nonseqprog, ".") ^^ {_.reduceRight ((x:Prog,y:Prog) => Seq(x,y))}
+    def nonseqprog: Parser[Prog] = atomicprog | conjprog | impprog
 
-	def value: Parser[Value] = (
-		  wholeNumber ^^ (x => Integer(x.toInt))
-		| "("~>value~","~value<~")" ^^ {case (x~","~y) => Pair(x,y)}
-		| "{"~>value~","~prog~","~prog<~"}" ^^ {case (x~","~y~","~z) => Closure(x,y,z)}  )
+    def prog: Parser[Prog] = rep1sep(nonseqprog, ".") ^^ {
+        _.reduceRight((x: Prog, y: Prog) => Seq(x, y))
+    }
 
-  def main(args: Array[String]): Unit = {
+    def value: Parser[Value] = (
+        wholeNumber ^^ (x => Integer(x.toInt))
+            | "(" ~> value ~ "," ~ value <~ ")" ^^ { case x ~ "," ~ y => Pair(x, y) }
+            | "{" ~> value ~ "," ~ prog ~ "," ~ prog <~ "}" ^^ { case x ~ "," ~ y ~ "," ~ z => Closure(x, y, z) })
 
-	    val programs = List("id", "id.id.id", "c.w1.w2", "(w1 -> w2)", "(w1 ^ w2)","id.(id^id).(w1->w1.w2)")
-		programs foreach {x => println("Input: "+x+"       "+(parseAll(prog,x).get.toStrucString))}
+    def main(args: Array[String]): Unit = {
 
-	    val values = List("7","(7,9)","{(7,9),id,id}")
-	    values foreach {x => println("Input: "+x+"       "+parseAll(value,x))}
+        println("Some programs:")
+        println("Program \t Parsed \t Prettyprinted")
 
-	}
+        val programs = List(
+            "id",
+            "id.id.id",
+            "c.w1.w2",
+            "(w1 -> w2)",
+            "(w1 ^ w2)",
+            "id.(id^id).(w1->w1.w2)"
+        )
+
+        programs foreach { x => println("" + x + "\t\t" + parseAll(prog, x).get + "\t\t" + parseAll(prog, x).get.pretty) }
+
+        println("Some values:")
+
+        val values = List(
+            "7",
+            "(7,9)",
+            "{(7,9),id,id}"
+        )
+
+        values foreach { x => println("" + x + "\t\t" + parseAll(value, x).get + "\t\t" + parseAll(value, x).get.pretty) }
+
+    }
 }
