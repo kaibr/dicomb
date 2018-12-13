@@ -1,6 +1,4 @@
 
-package dicomb;
-
 sealed abstract class Value {}
 
 case class Integer(i:Int) extends Value {

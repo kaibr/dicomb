@@ -1,6 +1,4 @@
 
-package dicomb;
-
 sealed abstract class Prog {
 	
 	def toStrucString : String = this match {

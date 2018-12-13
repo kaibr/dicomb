@@ -1,4 +1,3 @@
-package dicomb
 
 sealed abstract class Type {}
 
